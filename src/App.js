@@ -4,14 +4,13 @@ import "./styles.css";
 import api from "./services/api";
 
 function App() {
-  const [repositories, setrepositories] = useState([]);
+  const [repositories, setRepositories] = useState([]);
   useEffect(()=>{
     api.get('repositories').then(response =>{
-      setrepositories(response.data);
+      setRepositories(response.data);
     })
   }, []);
   async function handleAddRepository() {
-
     const response = await api.post('repositories', {
       title:`Novo repository ${Date.now()}`,
       url: "http://github.com/...", 
@@ -20,13 +19,16 @@ function App() {
     });
     const repository = response.data;
   
-    setrepositories([...repositories, repository]);
+    setRepositories([...repositories, repository]);
   }
 
   async function handleRemoveRepository(id) {
-    const response = await api.delete(`repositories/${id}`);
-    const repository = response.data;
-    setrepositories([...repositories]);
+    await api.delete(`repositories/${id}`);
+    
+    setRepositories(repositories.filter(
+      repository => repository.id !== id
+
+    ));
   }
 
   return (
